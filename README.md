@@ -9,6 +9,7 @@ While the construction of the data structure is expensive, lookups should be fas
 Note that it will always return some set that is considered nearest.
 Thresholds for a value that is "too dissimilar" is currently at your own discretion, the distance can be accessed with the `meta` data on the returned result(s).
 
+[![Clojars Project](https://img.shields.io/clojars/v/clj-similar.svg)](https://clojars.org/clj-similar)
 
 ## Caveats
 Collections of sets that have more than the maximum integer value of distinct values are currently unsupported.
