@@ -22,9 +22,7 @@ This is a *very* experimental library, it was literally written in 30 minutes, s
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
 (def s (similar coll))
 (nearest s #{"f" "e" "a" "b"})
-;=> {:value #{"f" "e" "a" "b"}, :dist-squared 0.0}
 (nearest s #{"a" "b"} 2)
-;=> ({:value #{"a" "b" "c"}, :dist-squared 8.0} {:value #{"f" "e" "a" "b"}, :dist-squared 12.0})
 ```
 
 ## Dependencies
