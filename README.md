@@ -40,7 +40,7 @@ This is a *very* experimental library, it was literally written in 30 minutes, s
 (meta (nearest s #{"a" "b"}))
 
 ;; The values of the sets can be any Clojure data structure, even other collections
-(def coll [#{["a"] ["a" "b"]} #{["c" "d"] ["a" "c"]})
+(def coll [#{["a"] ["a" "b"]} #{["c" "d"] ["a" "c"]}])
 (def s (similar coll))
 (nearest s #{["a" "b"]})
 ;=> #{["a" "b"] ["a"]}
