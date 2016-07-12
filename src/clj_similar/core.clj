@@ -52,6 +52,7 @@
 
 (defn nearest
   ([similar s]
+   {:pre [(set? s)]}
    (first (nearest similar s 1)))
   ([similar s n]
    {:pre [(set? s)]}
@@ -60,4 +61,4 @@
          h ((:hash-fn similar) s*)
          n (kdtree/nearest-neighbor (:tree similar) h n)
          mf (fn [e] (assoc (meta e) :dist-squared (:dist-squared e)))]
-     (map mf n))))
+     (doall (map mf n)))))
