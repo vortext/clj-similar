@@ -16,12 +16,12 @@
   [v->idx coll]
   (reduce (fn [mem c] (assoc mem c (index-set v->idx c))) {} coll))
 
-(defn- minhash-sets
+(defn minhash-sets
   [hash-fn indexed-sets]
   (reduce (fn [mem [k v]]
             (conj mem (with-meta (into [] (hash-fn v)) {:value k}))) [] indexed-sets))
 
-(defn- value-index
+(defn value-index
   [v coll]
   (into {} (map-indexed (fn [idx itm] [itm (int (+ 1 idx))]) v)))
 

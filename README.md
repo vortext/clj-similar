@@ -12,6 +12,7 @@ Note that it will always return some set that is considered closest. Thresholdin
 ## Caveats
 Collections of sets that have more than the maximum integer value of distinct values are currently unsupported.
 The construction of the tree is expensive, due to Clojure's persistent datastructure overhead.
+Currently this data structure is read-only, support for modifications is not currently planned.
 This is a *very* experimental library, it was literally written in 30 minutes, so don't expect much.
 
 ## Usage
