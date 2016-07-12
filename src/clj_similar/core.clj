@@ -20,8 +20,8 @@
 
 (defn minhash-sets
   [hash-fn indexed-sets]
-  (reduce (fn [mem [k v]]
-            (conj mem (with-meta (hash-fn v) {:value k}))) [] indexed-sets))
+  (let [mf (fn [[k v]] (with-meta (hash-fn v) {:value k}))]
+    (map mf indexed-sets)))
 
 (defn value-index
   [v]
