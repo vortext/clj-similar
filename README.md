@@ -14,7 +14,6 @@ Thresholds for a value that is "too dissimilar" is currently at your own discret
 Collections of sets that have more than the maximum integer value of distinct values are currently unsupported.
 The construction of the tree is expensive, due to various overheads.
 Currently this data structure is read-only, support for modifications is not currently planned.
-This is a *very* experimental library, it was literally written in 30 minutes, so don't expect much.
 
 ## Usage
 
