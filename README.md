@@ -33,6 +33,9 @@ Thresholds for a value that is "too dissimilar" is currently at your own discret
 (nearest s #{"f" "e" "a"})
 ;=> #{"f" "e" "a" "b"}
 
+(nearest s #{"a"})
+;=> #{"a" "b" "c"}
+
 ;; Two nearest neighbors
 (nearest s #{"a" "b"} 2)
 ;=> (#{"a" "b" "c"} #{"f" "e" "a" "b"})
