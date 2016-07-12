@@ -1,6 +1,6 @@
-(defproject clj-similar "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject clj-similar "0.1.0"
+  :description "Fast similar set lookup using MinHash and K-d trees"
+  :url "https://github.com/vortext/clj-similar"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
