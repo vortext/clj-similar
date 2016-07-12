@@ -20,7 +20,7 @@ This is a *very* experimental library, it was literally written in 30 minutes, s
 ```
 (require '[clj-similar.core :refer [similar nearest]])
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
-;; Creates the data structure, optionally a error rate can be defined (default 0.05)
+;; Creates the data structure, optionally an error rate can be defined (default 0.05)
 (def s (similar coll))
 ;; A single nearest neighbor
 (nearest s #{"f" "e" "a" "b"})
