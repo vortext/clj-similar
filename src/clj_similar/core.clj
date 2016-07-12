@@ -2,7 +2,7 @@
   (:require [clojure.set :as set]
             [kdtree :as kdtree])
   (:import [info.debatty.java.lsh MinHash]
-           [java.util TreeSet]))
+           [java.util TreeSet Set]))
 
 (defn index-set
   [v->idx s]
@@ -24,8 +24,8 @@
             (conj mem (with-meta (hash-fn v) {:value k}))) [] indexed-sets))
 
 (defn value-index
-  [v coll]
-  (into {} (map-indexed (fn [idx itm] [itm (int (+ 1 idx))]) v)))
+  [v]
+  (into {} (map-indexed (fn [idx itm] [itm (int (inc idx))]) v)))
 
 (defrecord Similar [v->idx tree hash-fn])
 
@@ -34,11 +34,11 @@
   (let [n (count coll)
         v (reduce set/union #{} coll)
         dict-size (count v)
-        v->idx (value-index v coll)
+        v->idx (value-index v)
         sets (index-sets v->idx coll)
 
-        hasher (MinHash. error (int dict-size))
-        hash-fn #(into [] (.signature ^MinHash hasher %))
+        hasher (MinHash. (double error) (int dict-size))
+        hash-fn #(vec (.signature ^MinHash hasher ^Set %))
         h (minhash-sets hash-fn sets)
         tree (kdtree/build-tree h)]
     (Similar. v->idx tree hash-fn)))
