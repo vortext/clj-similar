@@ -2,7 +2,7 @@
 [![Clojars Project](https://img.shields.io/clojars/v/clj-similar.svg)](https://clojars.org/clj-similar)
 
 Experimental library for (fast) similar set lookup.
-Under the hood it uses a [MinHash](https://en.wikipedia.org/wiki/MinHash) to compute locality sensitive hashes of a collection of sets, and loads them into a [k-d tree](https://en.wikipedia.org/wiki/K-d_tree).
+Under the hood it uses a [MinHash](https://en.wikipedia.org/wiki/MinHash) to compute [locality sensitive hashes](https://en.wikipedia.org/wiki/Locality-sensitive_hashing) of a collection of sets, and loads them into a [k-d tree](https://en.wikipedia.org/wiki/K-d_tree).
 The constructed `similar` data structure can be used to retrieve [nearest neighbors](https://en.wikipedia.org/wiki/Nearest_neighbor_search) of a given target set.
 While the construction of the data structure can be expensive, lookups should be fast.
 
