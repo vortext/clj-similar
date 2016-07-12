@@ -8,7 +8,7 @@
   [v->idx s]
   (let [ts (TreeSet.)]
     (doseq [c s]
-      (.add ts (get v->idx c (int 0))))
+      (.add ^TreeSet ts (get v->idx c (int 0))))
     ts))
 
 (defn index-sets
@@ -38,7 +38,7 @@
         sets (index-sets v->idx coll)
 
         hasher (MinHash. error (int dict-size))
-        hash-fn #(into [] (.signature hasher %))
+        hash-fn #(into [] (.signature ^MinHash hasher %))
         h (minhash-sets hash-fn sets)
         tree (kdtree/build-tree h)]
     (Similar. v->idx tree hash-fn)))
