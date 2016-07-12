@@ -6,7 +6,8 @@ The constructed `similar` data structure can be used to retrieve [nearest neighb
 
 While the construction of the data structure is expensive, lookups should be fast.
 
-Note that it will always return some set that is considered closest. Thresholding for a value that is "too dissimilar" is currently at your own discretion.
+Note that it will always return some set that is considered nearest.
+Thresholds for a value that is "too dissimilar" is currently at your own discretion, the distance can be accessed with the `meta` data on the returned result(s).
 
 
 ## Caveats
@@ -22,17 +23,28 @@ This is a *very* experimental library, it was literally written in 30 minutes, s
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
 ;; Creates the data structure, optionally an error rate can be defined (default 0.05)
 (def s (similar coll))
+(def s (similar coll 0.01)) ;; different error rate
 
 ;; A single nearest neighbor
 (nearest s #{"f" "e" "a" "b"})
-;=> {:value #{"f" "e" "a" "b"}}
+;=> #{"f" "e" "a" "b"}
+
+(nearest s #{"f" "e" "a"})
+;=> #{"f" "e" "a" "b"}
 
 ;; Two nearest neighbors
 (nearest s #{"a" "b"} 2)
-;=> ({:value #{"a" "b" "c"}} {:value #{"f" "e" "a" "b"}})
+;=> (#{"a" "b" "c"} #{"f" "e" "a" "b"})
 
 ;; To access the distance metrics and computed point use the associated metadata
 (meta (nearest s #{"a" "b"}))
+
+;; The values of the sets can be any Clojure data structure, even other collections
+(def coll [#{["a"] ["a" "b"]} #{["c" "d"] ["a" "c"]})
+(def s (similar coll))
+(nearest s #{["a" "b"]})
+;=> #{["a" "b"] ["a"]}
+
 ```
 
 ## Dependencies

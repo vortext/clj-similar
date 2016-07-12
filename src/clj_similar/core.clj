@@ -59,7 +59,7 @@
 (defn nearest
   "Given a `similar` data structure and a target set `s`, finds the nearest matching set.
    Optionally takes a parameter `n` for the `n` nearest sets.
-   Returning sets have distance metrics and vector associated as meta-data."
+   Returning sets have distance metrics and vector associated as metadata."
   ([similar s]
    {:pre [(set? s)]}
    (first (nearest similar s 1)))
@@ -69,5 +69,5 @@
          s* (index-set v->idx s)
          h ((:hash-fn similar) s*)
          n (kdtree/nearest-neighbor (:tree similar) h n)
-         mf (fn [e] (with-meta (meta e) e))]
+         mf (fn [e] (with-meta (:value (meta e)) e))]
      (map mf n))))
