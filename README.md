@@ -17,7 +17,7 @@ This is a *very* experimental library, it was literally written in 30 minutes, s
 
 ## Usage
 
-```
+```clojure
 (require '[clj-similar.core :refer [similar nearest]])
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
 ;; Creates the data structure, optionally an error rate can be defined (default 0.05)
