@@ -1,7 +1,7 @@
 (ns clj-similar.core
-  (:require [clojure.set :as set]
-            [kdtree :as kdtree])
+  (:require [clojure.set :as set])
   (:import [info.debatty.java.lsh MinHash]
+           [edu.wlu.cs.levy.CG KDTree]
            [java.util TreeSet Set]))
 
 (defn index-set
@@ -16,21 +16,29 @@
   returns a new collection of sets where each set has have their
   values replaced by indexes"
   [v->idx coll]
-  (reduce (fn [mem c] (assoc mem c (index-set v->idx c))) {} coll))
+  (reduce (fn [mem c] (assoc mem (index-set v->idx c) c)) {} coll))
 
-(defn minhash-sets
+(defn points
   [hash-fn indexed-sets]
-  (let [mf (fn [[k ts]]
+  (let [rf (fn [mem [ts k]]
              (let [hash (hash-fn ts)]
-               (with-meta (vec hash)
-                 {:value k :s ts :sig hash})))]
-    (map mf indexed-sets)))
+               (assoc mem (vec hash) {:value k :s ts :sig hash})))]
+    (reduce rf {} indexed-sets)))
 
 (defn value-index
   [v]
   (into {} (map-indexed (fn [idx itm] [itm (int (inc idx))]) v)))
 
 (defrecord Similar [v->idx tree hash-fn minhash])
+
+(defn build-tree
+  [points size]
+  (let [^KDTree tree (KDTree. size)]
+    (doseq [point points]
+      (.insert tree
+               ^doubles (double-array (first point))
+               ^Object (second point)))
+    tree))
 
 (defn- similar-internal
   [coll error]
@@ -39,11 +47,10 @@
         dict-size (count v)
         v->idx (value-index v)
         sets (index-sets v->idx coll)
-
-        minhash (MinHash. (double error) (int dict-size))
+        size (MinHash/size error)
+        minhash (MinHash. ^int (int size) ^int (int dict-size))
         hash-fn #(.signature ^MinHash minhash ^Set %)
-        h (minhash-sets hash-fn sets)
-        tree (kdtree/build-tree h)]
+        tree (build-tree (points hash-fn sets) size)]
     (Similar. v->idx tree hash-fn minhash)))
 
 
@@ -89,11 +96,11 @@
    (let [v->idx (:v->idx similar)
          s* (index-set v->idx s)
          sig* ((:hash-fn similar) s*)
-         n (kdtree/nearest-neighbor (:tree similar) (vec sig*) n)
          ff #(> (:jaccard-index (meta %)) threshold)
          similarity* (partial similarity exact? (:minhash similar))
          mf (fn [e]
-              (let [m (meta e)
-                    ji (similarity* sig* (:sig m) s* (:s m))]
-                (with-meta (:value m) (assoc e :jaccard-index ji))))]
+              (let [ji (similarity* sig* (:sig e) s* (:s e))]
+                (with-meta (:value e) {:jaccard-index ji})))
+
+         n (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)]
      (filter ff (map mf n)))))
