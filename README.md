@@ -115,12 +115,12 @@ in #{s q j G S R C a U i k r y A I W} out #{n z w s e L p j v Y E C F a t U y A 
 in #{d K w e q L j x J S R a U i g u A W} out #{T q j x J v S H E R i k N A D}
 ```
 
-Benchmarks were run on OS X El Capitan (Intel Xeon E3-1240V2@3.4Ghz, 32 GB DDR3 RAM)
+Benchmarks were run on OS X El Capitan (Intel Xeon E3-1240V2 @ 3.4Ghz, 32 GB DDR3 RAM)
 
 ## Dependencies
 
-* [clj-kdtree](https://github.com/abscondment/clj-kdtree)
 * [java-lsh](https://github.com/tdebatty/java-LSH)
+* [K-d tree by Levy](http://home.wlu.edu/~levys/software/kd/)
 
 ## License
 

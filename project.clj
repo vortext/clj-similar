@@ -7,5 +7,4 @@
   :source-paths ["src/clj"]
   :java-source-paths ["src/java"]
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [clj-kdtree "1.2.0" :exclusions [org.clojure/clojure]]
                  [info.debatty/java-lsh "0.9"]])
