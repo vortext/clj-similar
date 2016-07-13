@@ -51,10 +51,10 @@
 (defn similar
   "Constructs a new similar set from a collection of sets.
   Can be used for lookup of nearest sets using `nearest`.
-  Optionally takes a target similarity estimate error (default 0.05)."
+  Optionally takes a target similarity estimate error (default 0.01)."
   ([coll]
    {:pre [(every? set? coll)]}
-   (similar-internal coll 0.05))
+   (similar-internal coll 0.01))
   ([coll error]
    {:pre [(every? set? coll)]}
    (similar-internal coll error)))

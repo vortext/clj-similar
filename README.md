@@ -19,8 +19,8 @@ The resulting sets can optionally be filtered by their (real) jaccard-index, all
 (require '[clj-similar.core :refer [similar nearest]])
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
 ;; Creates the data structure
-(def s (similar coll)) ;; default similarity estimation error (0.05)
-(def s (similar coll 0.01)) ;; with a given similarity estimation error.
+(def s (similar coll)) ;; default similarity estimation error (0.01)
+(def s (similar coll 0.05)) ;; with a given similarity estimation error.
 
 ;; A single nearest neighbor
 (nearest s #{"f" "e" "a" "b"})
@@ -40,7 +40,7 @@ The resulting sets can optionally be filtered by their (real) jaccard-index, all
 ;=> (#{"a" "b" "c"} #{"f" "e" "a" "b"})
 
 ;; To access the distance metrics and computed point use the associated metadata
-;; (real) jaccard-index
+;; e.g. jaccard-index
 (:jaccard-index (meta (nearest s #{"a" "b"})))
 
 ;; Or you can optionally filter values below a certain jaccard-index threshold
