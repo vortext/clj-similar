@@ -47,6 +47,10 @@ The resulting sets can optionally be filtered by their (real) jaccard-index, all
 (nearest s #{"a" "b"} 2 :threshold 0.6)
 ;=> (#{"a" "b" "c"})
 
+;; By default this uses the approximate jaccard-index from the MinHash values
+;; You can calculate the exact jaccard indexes instead by passing exact? true
+(nearest s #{"a" "b"} 2 :threshold 0.6 :exact? true)
+
 ;; The values of the sets can be any Clojure data structure, even other collections
 (def coll [#{["a"] ["a" "b"]} #{["c" "d"] ["a" "c"]}])
 (def s (similar coll))

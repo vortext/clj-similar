@@ -4,7 +4,7 @@
 
 (deftest simple-test
   (let [coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}]
-        s (similar coll)]
+        s (similar coll 0.01)]
     (testing "Return the nearest set when exact match"
       (is (= (nearest s #{"f" "e" "a" "b"}) #{"f" "e" "a" "b"})))
     (testing "Return the nearest set when fuzzy match with extra element"
@@ -17,8 +17,12 @@
 
 (deftest threshold-test
   (let [coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}]
-        s (similar coll)]
-    (testing "Omit too values with a too low jaccard-index"
-      (is (= (nearest s #{"x"} 1 :threshold 0.5) '())))
-    (testing "Omit too values with a too low jaccard-index"
-      (is (= (nearest s #{"a" "b"} 2 :threshold 0.6) '(#{"a" "b" "c"}))))))
+        s (similar coll 0.01)]
+    (testing "omit too values with a too low jaccard-index (exact? true)"
+      (is (= (nearest s #{"x"} 1 :threshold 0.8 :exact? true) '())))
+    (testing "omit too values with a too low jaccard-index (exact? true)"
+      (is (= (nearest s #{"a" "b"} 2 :threshold 0.4 :exact? true) '(#{"a" "b" "c"} #{"f" "e" "a" "b"}))))
+    (testing "omit too values with a too low jaccard-index (exact? false)"
+      (is (= (nearest s #{"x"} 1 :threshold 0.8 :exact? false) '())))
+    (testing "omit too values with a too low jaccard-index (exact? false)"
+      (is (= (nearest s #{"a" "b"} 2 :threshold 0.4 :exact? false) '(#{"a" "b" "c"} #{"f" "e" "a" "b"}))))))
