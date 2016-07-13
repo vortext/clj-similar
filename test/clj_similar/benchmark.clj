@@ -18,7 +18,7 @@
     (random-set max-size)))
 
 (deftest benchmark
-  (let [count 1E5
+  (let [count 1000
         max-size 10
         similarity-error 0.2
         coll (do
