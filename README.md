@@ -7,8 +7,7 @@ The constructed `similar` data structure can be used to retrieve [nearest neighb
 While the construction of the data structure can be expensive, lookups should be fast.
 
 Note that it will always return some set that is considered nearest.
-Thresholds for a value that is "too dissimilar" is currently at your own discretion, the distance can be accessed with the `meta` data on the returned result(s).
-
+The resulting sets can optionally be filtered by their (real) jaccard-index, allowing to omit values that are too dissimilar.
 
 ## Caveats
 - Collections of sets that have more than the maximum integer value of distinct values are currently unsupported.
@@ -19,9 +18,9 @@ Thresholds for a value that is "too dissimilar" is currently at your own discret
 ```clojure
 (require '[clj-similar.core :refer [similar nearest]])
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
-;; Creates the data structure, optionally an error rate can be defined (default 0.05)
-(def s (similar coll))
-(def s (similar coll 0.01)) ;; different error rate
+;; Creates the data structure
+(def s (similar coll)) ;; default similarity estimation error (0.05)
+(def s (similar coll 0.01)) ;; with a given similarity estimation error.
 
 ;; A single nearest neighbor
 (nearest s #{"f" "e" "a" "b"})
@@ -41,7 +40,12 @@ Thresholds for a value that is "too dissimilar" is currently at your own discret
 ;=> (#{"a" "b" "c"} #{"f" "e" "a" "b"})
 
 ;; To access the distance metrics and computed point use the associated metadata
-(meta (nearest s #{"a" "b"}))
+;; (real) jaccard-index
+(:jaccard-index (meta (nearest s #{"a" "b"})))
+
+;; Or you can optionally filter values below a certain jaccard-index threshold
+(nearest s #{"a" "b"} 2 :threshold 0.6)
+;=> (#{"a" "b" "c"})
 
 ;; The values of the sets can be any Clojure data structure, even other collections
 (def coll [#{["a"] ["a" "b"]} #{["c" "d"] ["a" "c"]}])

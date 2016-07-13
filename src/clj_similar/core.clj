@@ -20,7 +20,9 @@
 
 (defn minhash-sets
   [hash-fn indexed-sets]
-  (let [mf (fn [[k v]] (with-meta (hash-fn v) {:value k}))]
+  (let [mf (fn [[k ts]]
+             (with-meta (hash-fn ts)
+               {:value k :s ts}))]
     (map mf indexed-sets)))
 
 (defn value-index
@@ -48,13 +50,17 @@
 (defn similar
   "Constructs a new similar set from a collection of sets.
   Can be used for lookup of nearest sets using `nearest`.
-  Optionally takes a target error rate (default 0.05)."
+  Optionally takes a target similarity estimate error (default 0.05)."
   ([coll]
    {:pre [(every? set? coll)]}
    (similar-internal coll 0.05))
   ([coll error]
    {:pre [(every? set? coll)]}
    (similar-internal coll error)))
+
+(defn jaccard-index
+  [^Set s1 ^Set s2]
+  (MinHash/JaccardIndex s1 s2))
 
 (defn nearest
   "Given a `similar` data structure and a target set `s`, finds the nearest matching set.
@@ -63,11 +69,15 @@
   ([similar s]
    {:pre [(set? s)]}
    (first (nearest similar s 1)))
-  ([similar s n]
+  ([similar s n & {:keys [threshold] :or {threshold 0.0}}]
    {:pre [(set? s)]}
    (let [v->idx (:v->idx similar)
          s* (index-set v->idx s)
          h ((:hash-fn similar) s*)
          n (kdtree/nearest-neighbor (:tree similar) h n)
-         mf (fn [e] (with-meta (:value (meta e)) e))]
-     (map mf n))))
+         ff #(>= (:jaccard-index (meta %)) threshold)
+         mf (fn [e]
+              (let [m (meta e)
+                    ji (jaccard-index s* (:s m))]
+                (with-meta (:value m) (assoc e :jaccard-index ji))))]
+     (filter ff (map mf n)))))
