@@ -20,7 +20,7 @@
 (deftest benchmark
   (let [count 1E5
         max-size 10
-        similarity-error 0.1
+        similarity-error 0.15
         coll (do
                (println "Generating" (long count) "random sets with max-size" max-size)
                (generate-random count max-size))
@@ -31,5 +31,6 @@
     (bench (nearest s (random-set max-size)))
     (println "Sample output")
     (doseq [_ (range 10)]
-      (let [in (random-set max-size)]
-        (println "in" in "out" (nearest s in))))))
+      (let [in (random-set (* 2 max-size))
+            out (first (nearest s in 1 :exact? true))]
+        (println "in" in "out" out (meta out))))))

@@ -20,10 +20,10 @@
 
 (defn points
   [hash-fn indexed-sets]
-  (let [mf (fn [[ts k]]
+  (let [rf (fn [mem [ts k]]
              (let [hash (hash-fn ts)]
-               [(double-array hash) {:value k :s ts :sig hash}]))]
-    (map mf indexed-sets)))
+               (assoc mem (vec hash) {:value k :s ts :sig hash})))]
+    (reduce rf {} indexed-sets)))
 
 (defn value-index
   [v]
@@ -35,7 +35,9 @@
   [points size]
   (let [^KDTree tree (KDTree. size)]
     (doseq [point points]
-      (.insert tree (first point) (second point)))
+      (.insert tree
+               ^doubles (double-array (first point))
+               ^Object (second point)))
     tree))
 
 (defn- similar-internal
@@ -100,6 +102,5 @@
               (let [ji (similarity* sig* (:sig e) s* (:s e))]
                 (with-meta (:value e) {:jaccard-index ji})))
 
-         n (.nearest (:tree similar) (double-array sig*) n)
-         ]
+         n (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)]
      (filter ff (map mf n)))))

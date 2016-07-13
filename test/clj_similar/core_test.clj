@@ -21,8 +21,7 @@
     (testing "Return the nearest set when fuzzy match with omitted element"
       (is (all-in? (nearest s #{"a"}) #{"a" "b" "c"})))
     (testing "Return the nearest two sets"
-      (is (all-in? (nearest s #{"a" "b"} 2) '(#{"a" "b" "c"} #{"f" "e" "a" "b"}))))
-    ))
+      (is (all-in? (nearest s #{"a" "b"} 2) '(#{"a" "b" "c"} #{"f" "e" "a" "b"}))))))
 
 (deftest threshold-test
   (let [coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}]
