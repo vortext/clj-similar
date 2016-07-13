@@ -61,6 +61,36 @@ The resulting sets can optionally be filtered by their (real) jaccard-index, all
 
 ```
 
+## Benchmark
+```
+Generating 100000 random sets with max-size 20
+Generating similar data structure (error: 0.2)
+"Elapsed time: 7305.048311 msecs"
+Testing speed of nearest neighbor retrieval
+Evaluation count : 2100 in 60 samples of 35 calls.
+             Execution time mean : 29.915691 ms
+    Execution time std-deviation : 3.117491 ms
+   Execution time lower quantile : 24.151212 ms ( 2.5%)
+   Execution time upper quantile : 35.281039 ms (97.5%)
+                   Overhead used : 9.188202 ns
+
+Found 1 outliers in 60 samples (1.6667 %)
+	low-severe	 1 (1.6667 %)
+ Variance from outliers : 72.0437 % Variance is severely inflated by outliers
+Sample output
+in #{T K f e x H X l} out #{T K f e q x P V O l u}
+in #{s e Q L j v Y H R F i k g l u m} out #{T n z s Q L G S Y H F U i r g o}
+in #{q R V} out #{q H R}
+in #{z w q Z B a r X l u} out #{z w M H E R t i b r X l m D}
+in #{d w q x M H F O k r g X u} out #{d n f q L x v E R F k A W D}
+in #{T n e M B P t i r y g X N h m D c} out #{T z L J Y R F B P t y g X u A}
+in #{d p j G J R u I} out #{d p j B r N u o}
+in #{T f Q p j Y E D} out #{T z f p R U g m W D}
+in #{z f Q Y F i N u h} out #{n s j Y F N u h o}
+in #{n K Q v M H F B a V U O r y g u I c} out #{n K z s M Y E F B t O k y u I o c}
+```
+Benchmarks were run on OS X El Capitan (Intel Xeon E3-1240V2, 32 GB DDR3 RAM)
+
 ## Dependencies
 
 * [clj-kdtree](https://github.com/abscondment/clj-kdtree)
