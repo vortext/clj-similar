@@ -1,4 +1,4 @@
-(defproject clj-similar "0.1.1"
+(defproject clj-similar "0.1.2"
   :description "Fast similar set lookup using MinHash and K-d trees"
   :url "https://github.com/vortext/clj-similar"
   :license {:name "Eclipse Public License"
