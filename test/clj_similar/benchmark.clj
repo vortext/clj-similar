@@ -4,11 +4,13 @@
             [clj-similar.core :refer :all]))
 
 
-(def dict (map char (range 33 127)))
+(def dict
+  ;; Upper case + lower case ASCII letters
+  (map (comp str char) (concat (range 65 91) (range 97 123))))
 
 (defn random-set [max-size]
   (let [size (+ 1 (rand-int max-size))]
-    (set (take size (repeatedly #(str (rand-nth dict)))))))
+    (set (take size (repeatedly #(rand-nth dict))))))
 
 (defn generate-random
   [count max-size]
@@ -17,15 +19,16 @@
 
 (deftest benchmark
   (let [count 1E5
-        max-size 50
+        max-size 20
         coll (do
                (println (str "Generating " (long count) " random sets with max-size " max-size))
                (generate-random count max-size))
         s (do
             (println "Generating similar data structure")
-            (time (similar coll 0.1)))]
+            (time (similar coll 0.2)))]
     (println "Testing speed of nearest neighbor retrieval")
-    #_(bench (nearest s (random-set max-size)))
+    (quick-bench (nearest s (random-set max-size)))
     (println "Sample output")
     (doseq [_ (range 10)]
-      (println (nearest s (random-set max-size))))))
+      (let [in (random-set max-size)]
+        (println "in " in " out " (nearest s in))))))
