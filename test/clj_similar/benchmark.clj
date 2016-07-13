@@ -19,8 +19,8 @@
 
 (deftest benchmark
   (let [count 1E5
-        max-size 20
-        similarity-error 0.2
+        max-size 25
+        similarity-error 0.25
         coll (do
                (println "Generating" (long count) "random sets with max-size" max-size)
                (generate-random count max-size))

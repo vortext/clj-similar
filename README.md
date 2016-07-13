@@ -89,7 +89,33 @@ in #{T f Q p j Y E D} out #{T z f p R U g m W D}
 in #{z f Q Y F i N u h} out #{n s j Y F N u h o}
 in #{n K Q v M H F B a V U O r y g u I c} out #{n K z s M Y E F B t O k y u I o c}
 ```
-Benchmarks were run on OS X El Capitan (Intel Xeon E3-1240V2, 32 GB DDR3 RAM)
+
+```
+lein test clj-similar.benchmark
+Generating 100000 random sets with max-size 25
+Generating similar data structure (error: 0.25)
+"Elapsed time: 9094.856931 msecs"
+Testing speed of nearest neighbor retrieval
+Evaluation count : 11880 in 60 samples of 198 calls.
+             Execution time mean : 5.892792 ms
+    Execution time std-deviation : 642.760475 µs
+   Execution time lower quantile : 4.673335 ms ( 2.5%)
+   Execution time upper quantile : 7.150597 ms (97.5%)
+                   Overhead used : 9.215817 ns
+Sample output
+in #{T d s e Q q C U O i k A D} out #{d e q L x v M Y C a t V i k r A h W}
+in #{w f e q J P t g l} out #{w e j J S I o}
+in #{Q L t b} out #{Q L t b u}
+in #{d z p x G E V r y l N A h m} out #{K w s e q L x G v R a U r A h m D}
+in #{K e Q q L p v S Y H R P t U O i r l u I D o} out #{T K e Q q L v S Y C P t O i N I m}
+in #{w e Q q p v Y H F a P t V U O r u h o} out #{w s L G v S Y F a U N u I o}
+in #{d z s p j x Y H E C F B P V g X l A I W D o} out #{d z Q L G v S Y F B P U i r g X l u A I m D c}
+in #{Q j G v S Y H C B k b y X N A D} out #{d w s Q q G S Y B P V O k b y g X l A m o}
+in #{s q j G S R C a U i k r y A I W} out #{n z w s e L p j v Y E C F a t U y A D}
+in #{d K w e q L j x J S R a U i g u A W} out #{T q j x J v S H E R i k N A D}
+```
+
+Benchmarks were run on OS X El Capitan (Intel Xeon E3-1240V2@3.4Ghz, 32 GB DDR3 RAM)
 
 ## Dependencies
 
