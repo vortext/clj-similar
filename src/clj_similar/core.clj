@@ -74,9 +74,13 @@
     (approximate-jaccard-index minhash sig1 sig2)))
 
 (defn nearest
-  "Given a `similar` data structure and a target set `s`, finds the nearest matching set.
-   Optionally takes a parameter `n` for the `n` nearest sets.
-   Returning sets have distance metrics and vector associated as metadata."
+  "Given a `similar` data structure and a target set `s`, finds the
+  nearest matching set. Optionally takes a parameter `n` for the `n`
+  nearest sets. Pass `threshold` as an optional arguments to filter
+  elements with a jaccard index below the threshold. By default this
+  is calculated heuristically using the MinHash, pass `exact? true` to
+  use the true jaccard index instead. Returning sets have distance
+  metrics and vector associated as metadata."
   ([similar s]
    {:pre [(set? s)]}
    (first (nearest similar s 1)))

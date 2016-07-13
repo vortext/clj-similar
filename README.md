@@ -13,6 +13,7 @@ The resulting sets can optionally be filtered by their (real) jaccard-index, all
 ## Caveats
 - Collections of sets that have more than the maximum integer value of distinct values are currently unsupported.
 - The data structure is read-only, support for modifications is not currently planned (but pull requests welcome).
+- The speed of the construction and lookup is almost completely determined by the similarity estimation error, higher errors are faster.
 
 ## Usage
 
