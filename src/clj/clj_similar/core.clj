@@ -6,7 +6,7 @@
 
 (defn index-array
   [dict s]
-  (let [size (int (inc (count dict)))
+  (let [size (inc (count dict))
         lst (ArrayList. ^Collection (take size (repeat false)))]
     (doseq [c s]
       (.set lst (int (get dict c 0)) true))
@@ -50,7 +50,7 @@
   (let [n (count coll)
         dict (value-index (reduce set/union #{} coll))
         sets (index-sets dict coll)
-        size (int (inc (count dict)))
+        size (inc (count dict))
         lsh (LSHMinHash. ^int (int stages) ^int (int buckets) ^int (int size))
         hash-fn #(.hash ^LSHMinHash lsh %)
         tree (build-tree (points hash-fn sets) stages)]
@@ -63,7 +63,7 @@
   Can be used for lookup of nearest sets using `nearest`.
   Optionally takes `bucket` and `stages` (also known as bands) as arguments."
   ([coll]
-   (similar coll 2 10))
+   (similar coll 10 2))
   ([coll buckets]
    (similar coll buckets 2))
   ([coll buckets stages]
@@ -93,4 +93,5 @@
                 (with-meta (:value e) {:jaccard-index ji})))
          nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array hash) ^int n)
          sf #(:jaccard-index (meta %))]
+     (println nearest)
      (take n (filter ff (reverse (sort-by sf (map mf (flatten (vec nearest))))))))))
