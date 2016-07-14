@@ -19,8 +19,8 @@
 
 (deftest benchmark
   (let [count 1000
-        max-size 20
-        similarity-error 0.25
+        max-size 10
+        similarity-error 0.1
         coll (do
                (println "Generating" (long count) "random sets with max-size" max-size)
                (generate-random count max-size))
@@ -28,7 +28,7 @@
             (println "Generating similar data structure" (str "(error: " similarity-error ")"))
             (time (similar coll similarity-error)))]
     (println "Testing speed of nearest neighbor retrieval")
-    (bench (nearest s (random-set max-size)))
+    #_(bench (nearest s (random-set max-size)))
     (println "Sample output for random target sets")
     (doseq [_ (range 10)]
       (let [in (random-set max-size)

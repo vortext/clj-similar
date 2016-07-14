@@ -105,9 +105,6 @@
          mf (fn [e]
               (let [ji (similarity* sig* (:sig e) s* (:s e))]
                 (with-meta (:value e) {:jaccard-index ji})))
-         n (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)
+         nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)
          sf #(:jaccard-index (meta %))]
-
-     (take
-      (filter ff (reverse (sort-by sf (map mf (flatten (vec n))))))
-      n))))
+     (take n (filter ff (reverse (sort-by sf (map mf (flatten (vec nearest))))))))))
