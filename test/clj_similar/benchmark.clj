@@ -19,8 +19,8 @@
 
 (deftest benchmark
   (let [count 1000
-        max-size 10
-        similarity-error 0.2
+        max-size 20
+        similarity-error 0.25
         coll (do
                (println "Generating" (long count) "random sets with max-size" max-size)
                (generate-random count max-size))
@@ -29,8 +29,14 @@
             (time (similar coll similarity-error)))]
     (println "Testing speed of nearest neighbor retrieval")
     (bench (nearest s (random-set max-size)))
-    (println "Sample output")
+    (println "Sample output for random target sets")
     (doseq [_ (range 10)]
       (let [in (random-set max-size)
             out (first (nearest s in 1 :exact? true))]
-        (println "in" in "out" out (meta out))))))
+        (println "in" in "out" out (meta out))))
+
+    (println "Sample output for existing sets")
+    (doseq [in (take 10 (random-sample 0.25 coll))]
+      (let [out (first (nearest s in 1 :exact? true))]
+        (println "in" in "out" out (meta out))))
+    ))

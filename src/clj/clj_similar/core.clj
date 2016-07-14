@@ -18,16 +18,20 @@
   [v->idx coll]
   (reduce (fn [mem c] (assoc mem (index-set v->idx c) c)) {} coll))
 
-(defn points
-  [hash-fn indexed-sets]
-  (let [rf (fn [mem [ts k]]
-             (let [hash (hash-fn ts)]
-               (assoc mem (vec hash) {:value k :s ts :sig hash})))]
-    (reduce rf {} indexed-sets)))
-
 (defn value-index
   [v]
   (into {} (map-indexed (fn [idx itm] [itm (int (inc idx))]) v)))
+
+(defn points
+  [hash-fn indexed-sets]
+  (let [rf (fn [mem [ts k]]
+             (let [hash (hash-fn ts)
+                   hash-vec (vec hash)
+                   ;; Hash bucket
+                   bucket (get mem hash-vec [])]
+               (assoc mem hash-vec (conj bucket {:value k :s ts :sig hash}))))]
+    (reduce rf {} indexed-sets)))
+
 
 (defrecord Similar [v->idx tree hash-fn minhash])
 
@@ -101,6 +105,9 @@
          mf (fn [e]
               (let [ji (similarity* sig* (:sig e) s* (:s e))]
                 (with-meta (:value e) {:jaccard-index ji})))
+         n (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)
+         sf #(:jaccard-index (meta %))]
 
-         n (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)]
-     (filter ff (map mf n)))))
+     (take
+      (filter ff (reverse (sort-by sf (map mf (flatten (vec n))))))
+      n))))
