@@ -2,22 +2,23 @@
   (:require [clojure.set :as set])
   (:import [info.debatty.java.lsh MinHash LSHMinHash]
            [edu.wlu.cs.levy.CG KDTree]
-           [java.util TreeSet Set Collection ArrayList]))
+           [org.apache.commons.lang3 ArrayUtils]
+           [java.util TreeSet Set Collection]))
 
 (defn index-array
-  [dict s]
-  (let [size (inc (count dict))
-        lst (ArrayList. ^Collection (take size (repeat false)))]
-    (doseq [c s]
-      (.set lst (int (get dict c 0)) true))
-    (boolean-array lst)))
+  [dict size s]
+  (let [lst (boolean-array (take size (repeat false)))
+        idx (map (fn [e] (int (get dict e 0))) s)]
+    (doseq [i idx]
+      (aset-boolean lst i true))
+    lst))
 
 (defn index-sets
   "Given a mapping of values to indexes and a collection of sets,
   returns a new collection of sets where each set has have their
   values replaced by indexes"
-  [dict coll]
-  (reduce (fn [mem s] (assoc mem (index-array dict s) s)) {} coll))
+  [dict size coll]
+  (reduce (fn [mem s] (assoc mem (index-array dict size s) s)) {} coll))
 
 (defn value-index
   [v]
@@ -34,7 +35,7 @@
     (reduce rf {} indexed-sets)))
 
 
-(defrecord Similar [dict tree hash-fn])
+(defrecord Similar [dict size tree hash-fn])
 
 (defn build-tree
   [points size]
@@ -49,12 +50,12 @@
   [coll buckets stages]
   (let [n (count coll)
         dict (value-index (reduce set/union #{} coll))
-        sets (index-sets dict coll)
         size (inc (count dict))
+        sets (index-sets dict size coll)
         lsh (LSHMinHash. ^int (int stages) ^int (int buckets) ^int (int size))
         hash-fn #(.hash ^LSHMinHash lsh %)
         tree (build-tree (points hash-fn sets) stages)]
-    (Similar. dict tree hash-fn)))
+    (Similar. dict size tree hash-fn)))
 
 
 ;;; Public API
@@ -86,12 +87,12 @@
   ([similar s n & {:keys [threshold] :or {threshold 0.0}}]
    {:pre [(set? s)]}
    (let [dict (:dict similar)
-         hash ((:hash-fn similar) (index-array dict s))
+         size (:size similar)
+         hash ((:hash-fn similar) (index-array dict size s))
          ff #(> (:jaccard-index (meta %)) threshold)
          mf (fn [e]
               (let [ji (jaccard-index s (:value e))]
                 (with-meta (:value e) {:jaccard-index ji})))
          nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array hash) ^int n)
          sf #(:jaccard-index (meta %))]
-     (println nearest)
      (take n (filter ff (reverse (sort-by sf (map mf (flatten (vec nearest))))))))))

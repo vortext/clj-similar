@@ -10,7 +10,7 @@
 
 (defn random-set [max-size]
   (let [size (+ 1 (rand-int max-size))]
-    (set (take size (repeatedly (rand-int 100) #_(rand-nth dict))))))
+    (set (take size (repeatedly #(rand-nth dict))))))
 
 (defn generate-random
   [count max-size]
@@ -24,7 +24,7 @@
 
 (deftest benchmark
   (let [count 1E5
-        max-size 50
+        max-size 100
         coll (do
                (println "Generating" (long count) "random sets with max-size" max-size)
                (generate-random count max-size))

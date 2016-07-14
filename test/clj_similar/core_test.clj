@@ -12,11 +12,8 @@
   (every? (partial in? coll) els))
 
 (deftest simple-test
-  (let [coll [#{"a" "b" "c"} #{"a" "e" "f"}
-              #{"c" "e"  "f"}
-              #{"a" "c" "d" "e" "f"}
-              #{"d" "e" "c"} #{"f" "e" "a" "b"}]
-        s (similar coll)]
+  (let [coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}]
+        s (similar coll 10 5)]
     (testing "Return the nearest set when exact match"
       (is (all-in? (nearest s #{"f" "e" "a" "b"}) #{"f" "e" "a" "b"})))
     (testing "Return nil if element is unseen"
@@ -30,9 +27,9 @@
 
 (deftest threshold-test
   (let [coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}]
-        s (similar coll)]
+        s (similar coll 10 5)]
     (testing "omit too values with a too low jaccard-index"
       (is (all-in? (nearest s #{"x"} 1 :threshold 0.8) '())))
     (testing "omit too values with a too low jaccard-index"
-      (is (all-in? (nearest s #{"a" "b"} 2 :threshold 0.4) '(#{"a" "b" "c"} #{"f" "e" "a" "b"}))))
+      (is (all-in? (nearest s #{"a" "b"} 3 :threshold 0.4) '(#{"a" "b" "c"} #{"f" "e" "a" "b"}))))
     ))
