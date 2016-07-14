@@ -21,8 +21,8 @@ The resulting sets can optionally be filtered by their (real) jaccard-index, all
 (require '[clj-similar.core :refer [similar nearest]])
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
 ;; Creates the data structure
-(def s (similar coll)) ;; default similarity estimation error (0.01)
-(def s (similar coll 0.05)) ;; with a given similarity estimation error.
+(def s (similar coll)) ;; default similarity estimation error (0.1)
+(def s (similar coll 0.01)) ;; with a given similarity estimation error.
 
 ;; A single nearest neighbor
 (nearest s #{"f" "e" "a" "b"})
@@ -49,9 +49,9 @@ The resulting sets can optionally be filtered by their (real) jaccard-index, all
 (nearest s #{"a" "b"} 2 :threshold 0.6)
 ;=> (#{"a" "b" "c"})
 
-;; By default this uses the approximate jaccard-index from the MinHash values
-;; You can calculate the exact jaccard indexes instead by passing exact? true
-(nearest s #{"a" "b"} 2 :threshold 0.6 :exact? true)
+;; By default this uses the exact Jaccard Index
+;; You can calculate the approximate jaccard indexes instead by passing exact? false
+(nearest s #{"a" "b"} 2 :threshold 0.6 :exact? false)
 
 ;; The values of the sets can be any Clojure data structure, even other collections
 (def coll [#{["a"] ["a" "b"]} #{["c" "d"] ["a" "c"]}])

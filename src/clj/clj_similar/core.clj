@@ -94,7 +94,8 @@
   metrics and vector associated as metadata."
   ([similar s]
    {:pre [(set? s)]}
-   (first (nearest similar s 1)))
+   ;; We retry this once, for sanity
+   (or (first (nearest similar s 1)) (first (nearest similar s 2))))
   ([similar s n & {:keys [threshold exact?] :or {threshold 0.0 exact? true}}]
    {:pre [(set? s)]}
    (let [v->idx (:v->idx similar)
@@ -106,4 +107,5 @@
                 (with-meta (:value e) {:jaccard-index ji})))
          nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)
          sf #(:jaccard-index (meta %))]
+     (println (flatten (vec nearest)))
      (take n (filter ff (reverse (sort-by sf (map mf (flatten (vec nearest))))))))))
