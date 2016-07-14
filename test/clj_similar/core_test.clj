@@ -16,8 +16,8 @@
         s (similar coll 0.01)]
     (testing "Return the nearest set when exact match"
       (is (all-in? (nearest s #{"f" "e" "a" "b"}) #{"f" "e" "a" "b"})))
-    (testing "Return set if element is unseen"
-      (is (all-in? (nearest s #{"x"})  #{"d" "e" "c"})))
+    (testing "Return nil if element is unseen"
+      (is (= (nearest s #{"x"}) nil)))
     (testing "Return the nearest set when fuzzy match with extra element"
       (is (all-in? (nearest s #{"f" "e" "a" "b" "x"}) #{"f" "e" "a" "b"})))
     (testing "Return the nearest set when fuzzy match with omitted element"
