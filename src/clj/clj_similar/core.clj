@@ -29,7 +29,7 @@
                    hash-vec (vec hash)
                    ;; Hash bucket
                    bucket (get mem hash-vec [])]
-               (assoc mem hash-vec (conj bucket {:value k :s ts :sig hash}))))]
+               (assoc mem hash-vec (conj bucket {:value k :sig hash}))))]
     (reduce rf {} indexed-sets)))
 
 
@@ -89,25 +89,21 @@
   nearest matching set. Optionally takes a parameter `n` for the `n`
   nearest sets. Pass `threshold` as an optional arguments to filter
   elements with a jaccard index below the threshold. By default this
-  is calculated heuristically using the MinHash, pass `exact? true` to
-  use the true jaccard index instead. Returning sets have distance
+  is calculated exactly, pass `exact? false` to
+  use the approximate MinHash jaccard index instead. Returning sets have distance
   metrics and vector associated as metadata."
   ([similar s]
    {:pre [(set? s)]}
    (first (nearest similar s 1)))
-  ([similar s n & {:keys [threshold exact?] :or {threshold 0.0 exact? false}}]
+  ([similar s n & {:keys [threshold exact?] :or {threshold 0.0 exact? true}}]
    {:pre [(set? s)]}
    (let [v->idx (:v->idx similar)
-         s* (index-set v->idx s)
-         sig* ((:hash-fn similar) s*)
+         sig* ((:hash-fn similar) (index-set v->idx s))
          ff #(> (:jaccard-index (meta %)) threshold)
          similarity* (partial similarity exact? (:minhash similar))
          mf (fn [e]
-              (let [ji (similarity* sig* (:sig e) s* (:s e))]
+              (let [ji (similarity* sig* (:sig e) s (:value e))]
                 (with-meta (:value e) {:jaccard-index ji})))
-         n (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)
+         nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)
          sf #(:jaccard-index (meta %))]
-
-     (take
-      (filter ff (reverse (sort-by sf (map mf (flatten (vec n))))))
-      n))))
+     (take n (filter ff (reverse (sort-by sf (map mf (flatten (vec nearest))))))))))

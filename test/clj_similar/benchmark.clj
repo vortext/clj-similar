@@ -17,10 +17,15 @@
   (for [_ (range count)]
     (random-set max-size)))
 
+(defn omit-random
+  [s n]
+  (let [omit (set (take n (shuffle s)))]
+    (apply (partial disj s) omit)))
+
 (deftest benchmark
   (let [count 1000
-        max-size 20
-        similarity-error 0.25
+        max-size 25
+        similarity-error 0.1
         coll (do
                (println "Generating" (long count) "random sets with max-size" max-size)
                (generate-random count max-size))
@@ -28,15 +33,11 @@
             (println "Generating similar data structure" (str "(error: " similarity-error ")"))
             (time (similar coll similarity-error)))]
     (println "Testing speed of nearest neighbor retrieval")
-    (bench (nearest s (random-set max-size)))
+    #_(bench (nearest s (random-set max-size)))
     (println "Sample output for random target sets")
     (doseq [_ (range 10)]
       (let [in (random-set max-size)
-            out (first (nearest s in 1 :exact? true))]
-        (println "in" in "out" out (meta out))))
-
-    (println "Sample output for existing sets")
-    (doseq [in (take 10 (random-sample 0.25 coll))]
-      (let [out (first (nearest s in 1 :exact? true))]
-        (println "in" in "out" out (meta out))))
+            out1 (first (nearest s in 1 :exact? true))
+            out2 (first (nearest s in 1 :exact? false))]
+        (println "exact" "in" in "out" out1 "exact" (meta out1) "approx" (meta out2))))
     ))
