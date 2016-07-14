@@ -107,5 +107,4 @@
                 (with-meta (:value e) {:jaccard-index ji})))
          nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array sig*) ^int n)
          sf #(:jaccard-index (meta %))]
-     (println (flatten (vec nearest)))
      (take n (filter ff (reverse (sort-by sf (map mf (flatten (vec nearest))))))))))
