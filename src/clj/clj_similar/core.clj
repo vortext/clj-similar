@@ -26,16 +26,16 @@
 
 (defn points
   [hash-fn indexed-sets]
-  (let [rf (fn [mem [ts k]]
-             (let [hash (hash-fn ts)
+  (let [rf (fn [mem [ia k]]
+             (let [hash (hash-fn ia)
                    hash-vec (vec hash)
                    ;; Hash bucket
                    bucket (get mem hash-vec [])]
-               (assoc mem hash-vec (conj bucket {:value k}))))]
+               (assoc mem hash-vec (conj bucket {:ia ia :value k}))))]
     (reduce rf {} indexed-sets)))
 
 
-(defrecord Similar [dict size tree hash-fn])
+(defrecord Similar [dict size tree hash-fn mh])
 
 (defn build-tree
   [points size]
@@ -46,6 +46,14 @@
                ^Object (second point)))
     tree))
 
+(defn get-field
+  "Returns obj's private or public field with given field-name,
+     defined in klass. Pass nil into obj for static fields."
+  [klass field-name obj]
+  (-> klass (.getDeclaredField (name field-name))
+      (doto (.setAccessible true))
+      (.get obj)))
+
 (defn- similar-internal
   [coll buckets stages]
   (let [n (count coll)
@@ -53,9 +61,10 @@
         size (inc (count dict))
         sets (index-sets dict size coll)
         lsh (LSHMinHash. ^int (int stages) ^int (int buckets) ^int (int size))
+        mh (get-field LSHMinHash "mh" lsh) ;; why oh why is this private.
         hash-fn #(.hash ^LSHMinHash lsh %)
         tree (build-tree (points hash-fn sets) stages)]
-    (Similar. dict size tree hash-fn)))
+    (Similar. dict size tree hash-fn mh)))
 
 
 ;;; Public API
@@ -64,16 +73,28 @@
   Can be used for lookup of nearest sets using `nearest`.
   Optionally takes `bucket` and `stages` (also known as bands) as arguments."
   ([coll]
-   (similar coll 10 2))
+   (similar coll 10 3))
   ([coll buckets]
-   (similar coll buckets 2))
+   (similar coll buckets 3))
   ([coll buckets stages]
    {:pre [(every? set? coll)]}
    (similar-internal coll buckets stages)))
 
+
 (defn jaccard-index
   [^Set s1 ^Set s2]
   (MinHash/JaccardIndex s1 s2))
+
+(defn approximate-jaccard-index
+  [^MinHash mh ^booleans ia1 ^booleans ia2]
+  (.similarity mh (.signature mh ia1) (.signature mh ia2)))
+
+(defn similarity
+  [exact? minhash s1 s2 ia1 ia2]
+  (if exact?
+    (jaccard-index s1 s2)
+    (approximate-jaccard-index minhash ia1 ia2)))
+
 
 (defn nearest
   "Given a `similar` data structure and a target set `s`, finds the
@@ -84,14 +105,17 @@
   ([similar s]
    {:pre [(set? s)]}
    (first (nearest similar s 1)))
-  ([similar s n & {:keys [threshold] :or {threshold 0.0}}]
+  ([similar s n & {:keys [threshold exact?] :or {threshold 0.0 exact? false}}]
    {:pre [(set? s)]}
-   (let [dict (:dict similar)
-         size (:size similar)
-         hash ((:hash-fn similar) (index-array dict size s))
+   (let [{dict :dict
+          size :size
+          hash-fn :hash-fn
+          mh :mh} similar
+         ia (index-array dict size s)
+         hash ((:hash-fn similar) ia)
          ff #(> (:jaccard-index (meta %)) threshold)
          mf (fn [e]
-              (let [ji (jaccard-index s (:value e))]
+              (let [ji (similarity exact? mh s (:value e) ia (:ia e))]
                 (with-meta (:value e) {:jaccard-index ji})))
          nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array hash) ^int n)
          sf #(:jaccard-index (meta %))]

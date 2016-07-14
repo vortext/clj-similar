@@ -23,25 +23,25 @@
     (apply (partial disj s) omit)))
 
 (deftest benchmark
-  (let [count 1E5
-        max-size 100
+  (let [count 1E6
+        max-size 10
         coll (do
                (println "Generating" (long count) "random sets with max-size" max-size)
                (generate-random count max-size))
         s (do
             (println "Generating similar data structure")
-            (time (similar coll 10 2)))]
+            (time (similar coll 10 3)))]
     (println "Testing speed of nearest neighbor retrieval")
-    #_(bench (nearest s (random-set max-size)))
     (println "Sample output for random target sets")
     (doseq [_ (range 10)]
       (let [in (random-set max-size)
-            out1 (first (nearest s in 1 :exact? true))]
-        (println "in" in "out" out1 "exact" (meta out1))))
+            out1 (first (nearest s in 1))]
+        (println "in" in "out" out1 "approximate" (meta out1))))
 
     (println "Sample output for existing sets")
     (doseq [in (take 10 (random-sample 0.25 coll))]
-      (let [part (omit-random in 5)
-            out (nearest s part)]
-        (println "in" part "original" in "out" out (meta out))))
+      (let [part (omit-random in 2)
+            out (first (nearest s part 1 :exact? true))]
+        (println "in" part "original" in "out" out "exact" (meta out))))
+    #_(bench (nearest s (random-set max-size)))
     ))
