@@ -2,13 +2,14 @@
 [![Clojars Project](https://img.shields.io/clojars/v/clj-similar.svg)](https://clojars.org/clj-similar) [![Build Status](https://travis-ci.org/vortext/clj-similar.png?branch=develop)](https://travis-ci.org/vortext/clj-similar)
 
 
-Experimental library for (fast) similar set lookup.
+Experimental library for (fast) approximate similar set lookup.
 Under the hood it uses a [MinHash](https://en.wikipedia.org/wiki/MinHash) to compute [locality sensitive hashes](https://en.wikipedia.org/wiki/Locality-sensitive_hashing) of a collection of sets, and loads them into a [k-d tree](https://en.wikipedia.org/wiki/K-d_tree).
 The constructed `similar` data structure can be used to retrieve [nearest neighbors](https://en.wikipedia.org/wiki/Nearest_neighbor_search) of a given target set.
 While the construction of the data structure can be expensive, lookups should be fast.
+Note that the results can be non-deterministic, especially if the similarity error is high.
 
 Note that it will always return some set that is considered nearest.
-The resulting sets can optionally be filtered by their (real) jaccard-index, allowing to omit values that are too dissimilar.
+The resulting sets can optionally be filtered by their (real) [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index), allowing to omit values that are too dissimilar.
 
 ## Caveats
 - Collections of sets that have more than the maximum integer value of distinct values are currently unsupported.
