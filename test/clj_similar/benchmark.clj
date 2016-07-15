@@ -35,13 +35,13 @@
     (println "Sample output for random target sets")
     (doseq [_ (range 10)]
       (let [in (random-set max-size)
-            out1 (first (nearest s in 1))]
-        (println "in" in "out" out1 "approximate" (meta out1))))
+            out (nearest s in 2)]
+        (println "in" in "out" out "approximate" (map meta out))))
 
     (println "Sample output for existing sets")
     (doseq [in (take 10 (random-sample 0.25 coll))]
       (let [part (omit-random in 2)
-            out (first (nearest s part 1 :exact? true))]
-        (println "in" part "original" in "out" out "exact" (meta out))))
+            out (nearest s part 2 :exact? true)]
+        (println "in" part "original" in "out" out "exact" (map meta out))))
     #_(bench (nearest s (random-set max-size)))
     ))
