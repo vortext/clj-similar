@@ -35,7 +35,7 @@
     (println "Sample output for random target sets")
     (doseq [_ (range 10)]
       (let [in (random-set max-size)
-            out (nearest s in 2)]
+            out (nearest s in 2 :exact? true)]
         (println "in" in "out" out "approximate" (map meta out))))
 
     (println "Sample output for existing sets")

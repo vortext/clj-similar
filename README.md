@@ -29,7 +29,7 @@ Note, LSH using MinHash is very sensitive to the average Jaccard similarity in y
 (def buckets 10)
 ;; the number of stages is also sometimes called the number of bands
 (def stages 3)
-(def s (similar coll)) ;; default banding and stages are (3, 10)
+(def s (similar coll)) ;; default buckets and stages are (10, 3)
 (def s (similar coll buckets stages))
 
 ;; A single nearest neighbor
@@ -68,42 +68,40 @@ Note, LSH using MinHash is very sensitive to the average Jaccard similarity in y
 ```
 Generating 1000000 random sets with max-size 10
 Generating similar data structure
-"Elapsed time: 44252.975496 msecs"
+"Elapsed time: 44071.000835 msecs"
 Testing speed of nearest neighbor retrieval
-
 Sample output for random target sets
-in #{e E O m} out (#{e j O m} #{e O m}) approximate ({:jaccard-index 1.0} {:jaccard-index 1.0})
-in #{k} out (#{R k} #{k}) approximate ({:jaccard-index 1.0} {:jaccard-index 1.0})
-in #{d K M l u} out (#{d K M l} #{d K s M S l}) approximate ({:jaccard-index 1.0} {:jaccard-index 1.0})
-in #{M Y Z C r g X o} out (#{M S Z r g X o} #{Q L M g X o}) approximate ({:jaccard-index 1.0} {:jaccard-index 0.7777777777777778})
-in #{w J M S Y E t b A} out (#{w Q q M t b N h} #{z w J M U b A}) approximate ({:jaccard-index 0.8888888888888888} {:jaccard-index 0.7777777777777778})
-in #{u} out (#{u} #{R k u}) approximate ({:jaccard-index 1.0} {:jaccard-index 0.4444444444444444})
-in #{L G h} out (#{G S h D} #{z L G Y h}) approximate ({:jaccard-index 1.0} {:jaccard-index 1.0})
-in #{e j M R F P} out (#{e j C F P y} #{e F P y u}) approximate ({:jaccard-index 1.0} {:jaccard-index 0.8888888888888888})
-in #{a b} out (#{S a b y} #{R a b}) approximate ({:jaccard-index 1.0} {:jaccard-index 1.0})
-in #{n G Z V y u o} out (#{n G R V r} #{n G Z V U}) approximate ({:jaccard-index 1.0} {:jaccard-index 1.0})
-
-Sample output for existing sets (with two elements omitted)
-in #{} original #{l I} out () exact ()
-in #{Z R P} original #{J Z R P c} out (#{Z R P} #{M Z P D}) exact ({:jaccard-index 1.0} {:jaccard-index 0.4})
-in #{a O h D} original #{a O l A h D} out (#{S a O h D} #{a O r h W D}) exact ({:jaccard-index 0.8} {:jaccard-index 0.6666666666666666})
-in #{n q R k r u} original #{n q R B k r l u} out (#{n q Y R r} #{n q R r A}) exact ({:jaccard-index 0.5714285714285714} {:jaccard-index 0.5714285714285714})
-in #{n f p W} original #{n f p O i W} out (#{n z w s f p W} #{n f p j x J W c}) exact ({:jaccard-index 0.5714285714285714} {:jaccard-index 0.5})
-in #{G i g m} original #{G t O i g m} out (#{G R i g m} #{p j G H i g m}) exact ({:jaccard-index 0.8} {:jaccard-index 0.5714285714285714})
-in #{n z q J M I} original #{n K z q G J M I} out (#{z q J M I D} #{z J M I}) exact ({:jaccard-index 0.7142857142857143} {:jaccard-index 0.6666666666666666})
-in #{j} original #{f j r} out (#{j} #{z j y A}) exact ({:jaccard-index 1.0} {:jaccard-index 0.25})
-in #{T d} original #{T d g N} out (#{T d} #{T d u}) exact ({:jaccard-index 1.0} {:jaccard-index 0.6666666666666666})
-in #{c} original #{Q O c} out (#{c} #{T J c}) exact ({:jaccard-index 1.0} {:jaccard-index 0.3333333333333333})
-Evaluation count : 7680 in 60 samples of 128 calls.
-             Execution time mean : 7.905725 ms
-    Execution time std-deviation : 271.636864 µs
-   Execution time lower quantile : 7.457396 ms ( 2.5%)
-   Execution time upper quantile : 8.457490 ms (97.5%)
-                   Overhead used : 9.210622 ns
+in #{Y R a g l W c} out (#{q Y R t g X l W} #{Y Z R a g N}) approximate ({:jaccard-index 0.5} {:jaccard-index 0.4444444444444444})
+in #{d w Z X N D} out (#{Z X N D} #{d Z a X D}) approximate ({:jaccard-index 0.6666666666666666} {:jaccard-index 0.5714285714285714})
+in #{w q Z H B i A I} out (#{e q M H R B i I} #{q x M H B a i A}) approximate ({:jaccard-index 0.45454545454545453} {:jaccard-index 0.45454545454545453})
+in #{w p U b N o} out (#{w U b N o} #{U b N}) approximate ({:jaccard-index 0.8333333333333334} {:jaccard-index 0.5})
+in #{B D} out (#{B D} #{E B D}) approximate ({:jaccard-index 1.0} {:jaccard-index 0.6666666666666666})
+in #{B V O c} out (#{T K B V h c} #{v B V i m c}) approximate ({:jaccard-index 0.42857142857142855} {:jaccard-index 0.42857142857142855})
+in #{F a V l} out (#{w F a V l} #{F a V l N}) approximate ({:jaccard-index 0.8} {:jaccard-index 0.8})
+in #{d f x J S k l u D} out (#{x J S E l u D} #{d L x J v S C y u D}) approximate ({:jaccard-index 0.6} {:jaccard-index 0.46153846153846156})
+in #{w s q v a P O i} out (#{v a P i} #{q v O i D}) approximate ({:jaccard-index 0.5} {:jaccard-index 0.4444444444444444})
+in #{d j Z R O k D} out (#{j Z a O D} #{d e j x Z B O D}) approximate ({:jaccard-index 0.5} {:jaccard-index 0.5})
+Sample output for existing sets
+in #{E U O i g l A D} original #{L E U O i g l A I D} out (#{L E U O i g l A I D} #{e t U i g l A D}) exact ({:jaccard-index 0.8} {:jaccard-index 0.6})
+in #{n i h} original #{n U i k h} out (#{n i h} #{n i l h}) exact ({:jaccard-index 1.0} {:jaccard-index 0.75})
+in #{p v R y D} original #{p v R B y X D} out (#{q p v R y N D} #{p R D}) exact ({:jaccard-index 0.7142857142857143} {:jaccard-index 0.6})
+in #{n q x G U} original #{n q x G C U W} out (#{n x G U} #{d n q p x G U}) exact ({:jaccard-index 0.8} {:jaccard-index 0.7142857142857143})
+in #{v k b y m} original #{w v B k b y m} out (#{w v B k b y m} #{v k y A m D}) exact ({:jaccard-index 0.7142857142857143} {:jaccard-index 0.5714285714285714})
+in #{l} original #{f l D} out (#{l} #{X l}) exact ({:jaccard-index 1.0} {:jaccard-index 0.5})
+in #{P b} original #{f S P b} out (#{P b} #{q P b}) exact ({:jaccard-index 1.0} {:jaccard-index 0.6666666666666666})
+in #{f} original #{f W D} out (#{f} #{f N}) exact ({:jaccard-index 1.0} {:jaccard-index 0.5})
+in #{U b} original #{U O b l} out (#{U b} #{U b o}) exact ({:jaccard-index 1.0} {:jaccard-index 0.6666666666666666})
+in #{T E V l D} original #{T E B V U l D} out (#{T E a V D} #{V O l D}) exact ({:jaccard-index 0.6666666666666666} {:jaccard-index 0.5})
+Evaluation count : 8700 in 60 samples of 145 calls.
+             Execution time mean : 6.829506 ms
+    Execution time std-deviation : 323.983327 µs
+   Execution time lower quantile : 6.341004 ms ( 2.5%)
+   Execution time upper quantile : 7.483967 ms (97.5%)
+                   Overhead used : 9.201927 ns
 
 Found 1 outliers in 60 samples (1.6667 %)
 	low-severe	 1 (1.6667 %)
- Variance from outliers : 20.6311 % Variance is moderately inflated by outliers
+ Variance from outliers : 33.5825 % Variance is moderately inflated by outliers
 
 ```
 

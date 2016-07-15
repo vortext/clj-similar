@@ -105,7 +105,7 @@
   ([similar s]
    {:pre [(set? s)]}
    (first (nearest similar s 1)))
-  ([similar s n & {:keys [threshold exact?] :or {threshold 0.0 exact? false}}]
+  ([similar s n & {:keys [threshold exact?] :or {threshold 0.0 exact? true}}]
    {:pre [(set? s)]}
    (let [{dict :dict
           size :size
