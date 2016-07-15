@@ -43,5 +43,5 @@
       (let [part (omit-random in 2)
             out (nearest s part 2 :exact? true)]
         (println "in" part "original" in "out" out "exact" (map meta out))))
-    #_(bench (nearest s (random-set max-size)))
+    (bench (nearest s (random-set max-size)))
     ))
