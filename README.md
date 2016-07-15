@@ -4,26 +4,32 @@
 
 Experimental library for (fast) approximate similar set lookup.
 Under the hood it uses a [MinHash](https://en.wikipedia.org/wiki/MinHash) to compute [locality sensitive hashes](https://en.wikipedia.org/wiki/Locality-sensitive_hashing) of a collection of sets, and loads them into a [k-d tree](https://en.wikipedia.org/wiki/K-d_tree).
-The constructed `similar` data structure can be used to retrieve [nearest neighbors](https://en.wikipedia.org/wiki/Nearest_neighbor_search) of a given target set.
+The constructed `similar` probabilistic data structure can be used to retrieve [nearest neighbors](https://en.wikipedia.org/wiki/Nearest_neighbor_search) of a given target set.
 While the construction of the data structure can be expensive, lookups should be fast.
-Note that the results can be non-deterministic, especially if the similarity error is high.
+The results are non-deterministic, and depend on the bucket and banding sizes.
 
 Note that it will always return some set that is considered nearest.
-The resulting sets can optionally be filtered by their (real) [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index), allowing to omit values that are too dissimilar.
+The resulting sets can optionally be filtered by their [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index), allowing to omit values that are too dissimilar.
 
 ## Caveats
 - Collections of sets that have more than the maximum integer value of distinct values are currently unsupported.
 - The data structure is read-only, support for modifications is not currently planned (but pull requests welcome).
-- The speed of the construction and lookup is almost completely determined by the similarity estimation error, higher errors are faster.
+- Read the [binning caveats](https://github.com/tdebatty/java-LSH#binning) before using!
 
 ## Usage
+Note, LSH using MinHash is very sensitive to the average Jaccard similarity in your dataset! If most vectors in your dataset have a Jaccard similarity above or below 0.5, they might all fall in the same bucket. The example below might thus give different results for each run.
 
 ```clojure
 (require '[clj-similar.core :refer [similar nearest]])
 (def coll [#{"a" "b" "c"} #{"d" "e" "c"} #{"f" "e" "a" "b"}])
 ;; Creates the data structure
-(def s (similar coll)) ;; default similarity estimation error (0.1)
-(def s (similar coll 0.01)) ;; with a given similarity estimation error.
+
+;; the number of buckets should be chosen such that we have at least 100 items per bucket
+(def buckets 10)
+;; the number of stages is also sometimes called the number of bands
+(def stages 3)
+(def s (similar coll)) ;; default banding and stages are (3, 10)
+(def s (similar coll buckets stages))
 
 ;; A single nearest neighbor
 (nearest s #{"f" "e" "a" "b"})
@@ -42,17 +48,12 @@ The resulting sets can optionally be filtered by their (real) [Jaccard index](ht
 (nearest s #{"a" "b"} 2)
 ;=> (#{"a" "b" "c"} #{"f" "e" "a" "b"})
 
-;; To access the distance metrics and computed point use the associated metadata
-;; e.g. jaccard-index
+;; To access the distance metrics use the associated metadata
 (:jaccard-index (meta (nearest s #{"a" "b"})))
 
 ;; Or you can optionally filter values below a certain jaccard-index threshold
 (nearest s #{"a" "b"} 2 :threshold 0.6)
 ;=> (#{"a" "b" "c"})
-
-;; By default this uses the exact Jaccard Index
-;; You can calculate the approximate jaccard indexes instead by passing exact? false
-(nearest s #{"a" "b"} 2 :threshold 0.6 :exact? false)
 
 ;; The values of the sets can be any Clojure data structure, even other collections
 (def coll [#{["a"] ["a" "b"]} #{["c" "d"] ["a" "c"]}])
