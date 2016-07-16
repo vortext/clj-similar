@@ -31,7 +31,7 @@
                    hash-vec (vec hash)
                    ;; Hash bucket
                    bucket (get mem hash-vec [])]
-               (assoc mem hash-vec (conj bucket {:ia ia :s k}))))]
+               (assoc mem hash-vec (conj bucket k))))]
     (reduce rf {} indexed-sets)))
 
 
@@ -111,12 +111,13 @@
           size :size
           hash-fn :hash-fn
           mh :mh} similar
-         ia (index-array dict size s)
+         index-array* (partial index-array dict size)
+         ia (index-array* s)
          hash ((:hash-fn similar) ia)
          ff #(> (:jaccard-index (meta %)) threshold)
          mf (fn [e]
-              (let [ji (similarity exact? mh s (:s e) ia (:ia e))]
-                (with-meta (:s e) {:jaccard-index ji})))
+              (let [ji (similarity exact? mh s e ia (index-array* e))]
+                (with-meta e {:jaccard-index ji})))
          nearest (.nearest ^KDTree (:tree similar) ^doubles (double-array hash) ^int n)
          sf #(:jaccard-index (meta %))]
      (take n (filter ff (reverse (sort-by sf (distinct (map mf (flatten (vec nearest)))))))))))
